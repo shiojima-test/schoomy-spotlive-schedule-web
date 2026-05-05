@@ -1,0 +1,52 @@
+name: Build PDF
+
+on:
+  workflow_dispatch:
+    inputs:
+      month:
+        description: 'YYYY-MM (例: 2026-05)'
+        required: true
+        type: string
+      version:
+        description: 'バージョン (例: v1.0)'
+        required: true
+        type: string
+        default: 'v1.0'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        working-directory: scripts
+        run: npm ci || npm install
+
+      - name: Build PDF
+        working-directory: scripts
+        env:
+          MONTH: ${{ inputs.month }}
+          VERSION: ${{ inputs.version }}
+          PAGES_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
+        run: npm run build
+
+      - name: Upload to Releases
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: schedule-${{ inputs.month }}-${{ inputs.version }}
+          name: スポットライブスケジュール ${{ inputs.month }} ${{ inputs.version }}
+          body: |
+            自動生成されたPDF
+            - 対象月: ${{ inputs.month }}
+            - バージョン: ${{ inputs.version }}
+          files: output/*.pdf
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

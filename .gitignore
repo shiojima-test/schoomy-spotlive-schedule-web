@@ -1,0 +1,22 @@
+# Node
+node_modules/
+npm-debug.log
+
+# Playwright
+test-results/
+playwright-report/
+
+# 出力ディレクトリ(PDFはReleasesに置く)
+output/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# エディタ
+.vscode/
+.idea/
+
+# 環境変数
+.env
+.env.local

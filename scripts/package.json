@@ -1,0 +1,15 @@
+{
+  "name": "schoomy-spotlive-schedule-pdf-builder",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "description": "スクーミースポットライブ放送スケジュールを Playwright で PDF 化",
+  "scripts": {
+    "build": "node build-pdf.js",
+    "build:local": "LOCAL=true node build-pdf.js",
+    "postinstall": "playwright install chromium"
+  },
+  "dependencies": {
+    "playwright": "^1.48.0"
+  }
+}

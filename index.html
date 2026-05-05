@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=210mm, initial-scale=1">
+<title>スクーミースポットライブ放送スケジュール v1.0</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+1:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="src/style.css">
+</head>
+<body>
+
+<div class="page" id="page">
+
+  <header class="header" id="header">
+    <div class="header-top">
+      <span class="eyebrow">SCHOOMY  SPOT  LIVE  ／  CLASS  SCHEDULE</span>
+      <span class="issue" id="issue-text">2026年5月号 ／ ISSUE  No.5</span>
+    </div>
+    <div class="title-row">
+      <h1 class="title-main">スクーミースポットライブ放送スケジュール</h1>
+      <span class="month-mark" id="month-mark">5月号</span>
+    </div>
+    <div class="subline-desc">毎日20分、4ジャンルの授業をライブ配信。今月は新作16タイトルをお届け。</div>
+    <div class="notice-strip">
+      <span class="notice-label">参加方法</span>
+      <span class="notice-item"><span class="num">1</span>視聴にはライセンスが必要です</span>
+      <span class="notice-divider"></span>
+      <span class="notice-item"><span class="num">2</span>3日前までにご予約ください</span>
+    </div>
+  </header>
+
+  <div class="legend">
+    <span class="lg"><span class="lg-bar a"></span>課題解決</span>
+    <span class="lg"><span class="lg-bar b"></span>コネクター活用</span>
+    <span class="lg"><span class="lg-bar c"></span>データサイエンス</span>
+    <span class="lg"><span class="lg-bar d"></span>物理シミュレーション</span>
+    <span class="lg-note">時間帯：① 10:20-11:50  ／  ② 13:20-14:50  ／  ③ 14:50-16:20</span>
+  </div>
+
+  <section class="catalog">
+    <div class="section-title">
+      <span class="ja">今月の新作番組</span>
+      <span class="en">SHOW  CATALOG  ／  16  TITLES</span>
+      <span class="line"></span>
+    </div>
+    <div class="catalog-grid" id="catalog-grid">
+      <!-- ここに JS で4列のカテゴリカラムを描画 -->
+    </div>
+  </section>
+
+  <section class="schedule">
+    <div class="section-title">
+      <span class="ja">放送スケジュール</span>
+      <span class="en">WEEKLY  BROADCAST  GRID</span>
+      <span class="line"></span>
+    </div>
+    <div class="sched-table" id="schedule-table">
+      <!-- ここに JS で マトリクス表を描画 -->
+    </div>
+  </section>
+
+  <footer class="footer">
+    <span>© 株式会社スクーミー SchooMy, Inc.  ／  fox.schoomy.com</span>
+  </footer>
+
+  <div id="loading" class="overlay">データを読み込み中…</div>
+  <div id="error" class="overlay error" style="display:none"></div>
+
+</div>
+
+<script type="module" src="src/render.js"></script>
+
+</body>
+</html>
