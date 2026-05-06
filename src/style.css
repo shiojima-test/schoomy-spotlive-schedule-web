@@ -1,9 +1,4 @@
-/* ============================================
-   schoomy-spotlive-schedule-web
-   style.css v1.0
-   ベース: pattern1_v7.3.html
-   ============================================ */
-
+@import url('https://fonts.googleapis.com/css2?family=M+PLUS+1:wght@400;500;700;800;900&display=swap');
 @page { size: 210mm 257mm; margin: 0; }
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html, body {
@@ -85,6 +80,7 @@ html, body {
   margin-bottom: 2.5mm;
 }
 
+/* 注意事項ストリップ */
 .notice-strip {
   margin: 0 -8mm;
   background: var(--ink);
@@ -155,7 +151,6 @@ html, body {
   flex-direction: column;
   margin-bottom: 3mm;
 }
-
 .section-title {
   display: flex; align-items: center; gap: 2.5mm; margin-bottom: 1.8mm;
   flex-shrink: 0;
@@ -173,24 +168,26 @@ html, body {
 .cat-column { display: flex; flex-direction: column; }
 
 .cat-header {
-  padding: 1.2mm 2.2mm 1.1mm 2.2mm;
+  padding: 1.5mm 2.2mm 1.4mm 2.2mm;
   color: #fff;
-  display: flex; flex-direction: column; gap: 0.1mm;
+  display: flex; flex-direction: column; gap: 0.2mm;
+  flex-shrink: 0;
 }
 .cat-header.a { background: var(--cat-a); }
 .cat-header.b { background: var(--cat-b); }
 .cat-header.c { background: var(--cat-c); }
 .cat-header.d { background: var(--cat-d); }
-.cat-header .cat-name { font-size: 7.2pt; font-weight: 800; letter-spacing: 0.3pt; line-height: 1.1; }
+.cat-header .cat-name { font-size: 7.5pt; font-weight: 800; letter-spacing: 0.3pt; line-height: 1.1; }
 .cat-header .cat-en { font-size: 4.8pt; font-weight: 600; letter-spacing: 1.5pt; opacity: 0.7; }
 
 .cat-body {
   border: 0.25mm solid var(--rule-mid);
   border-top: none;
   display: flex; flex-direction: column;
+  flex-grow: 1;
 }
 .show-card {
-  padding: 1.5mm 2.2mm;
+  padding: 1.8mm 2.2mm;
   border-bottom: 0.15mm dashed var(--rule);
 }
 .show-card:last-child { border-bottom: none; }
@@ -214,6 +211,10 @@ html, body {
   flex-direction: column;
 }
 
+.schedule .section-title {
+  margin-bottom: 3mm;
+}
+
 .sched-table {
   display: grid;
   grid-template-columns: 13mm repeat(5, 1fr);
@@ -231,7 +232,6 @@ html, body {
 }
 .sched-cell:nth-child(6n) { border-right: none; }
 
-/* 曜日行 */
 .sched-cell.col-head {
   background: var(--ink);
   color: var(--paper);
@@ -242,7 +242,6 @@ html, body {
 .col-head .day-jp { font-size: 6.5pt; font-weight: 800; letter-spacing: 0.5pt; }
 .col-head .day-en { font-size: 4.5pt; font-weight: 600; opacity: 0.7; letter-spacing: 1pt; }
 
-/* 週ヘッダー */
 .sched-cell.row-head {
   background: var(--bg-soft);
   align-items: center; justify-content: center;
@@ -254,7 +253,6 @@ html, body {
 
 .sched-cell.sched-content { background: var(--paper); }
 .sched-cell.sched-content.has-new { background: var(--accent-pale); }
-
 .sched-cell.holiday {
   background: #f1f0ec;
   align-items: center; justify-content: center;
@@ -312,24 +310,7 @@ html, body {
   background: var(--paper);
   flex-shrink: 0;
 }
-
-/* ====== ローディング/エラー ====== */
-.overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.95);
-  font-size: 12pt;
-  font-weight: 700;
-  color: var(--text-soft);
-  z-index: 100;
-}
-.overlay.error {
-  color: var(--cat-d);
-  background: rgba(255, 240, 230, 0.95);
-  white-space: pre-wrap;
-  padding: 10mm;
-  text-align: center;
+.footer-page {
+  font-size: 12pt; font-weight: 900; color: var(--accent);
+  font-variant-numeric: tabular-nums; letter-spacing: -0.5pt;
 }

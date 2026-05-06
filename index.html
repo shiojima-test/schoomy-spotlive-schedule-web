@@ -11,18 +11,18 @@
 </head>
 <body>
 
-<div class="page" id="page">
+<div class="page">
 
-  <header class="header" id="header">
+  <header class="header">
     <div class="header-top">
       <span class="eyebrow">SCHOOMY  SPOT  LIVE  ／  CLASS  SCHEDULE</span>
-      <span class="issue" id="issue-text">2026年5月号 ／ ISSUE  No.5</span>
+      <span class="issue" id="issue-text"></span>
     </div>
     <div class="title-row">
       <h1 class="title-main">スクーミースポットライブ放送スケジュール</h1>
-      <span class="month-mark" id="month-mark">5月号</span>
+      <span class="month-mark" id="month-mark"></span>
     </div>
-    <div class="subline-desc">毎日20分、4ジャンルの授業をライブ配信。今月は新作16タイトルをお届け。</div>
+    <div class="subline-desc" id="subline-desc"></div>
     <div class="notice-strip">
       <span class="notice-label">参加方法</span>
       <span class="notice-item"><span class="num">1</span>視聴にはライセンスが必要です</span>
@@ -45,9 +45,7 @@
       <span class="en">SHOW  CATALOG  ／  16  TITLES</span>
       <span class="line"></span>
     </div>
-    <div class="catalog-grid" id="catalog-grid">
-      <!-- ここに JS で4列のカテゴリカラムを描画 -->
-    </div>
+    <div class="catalog-grid" id="catalog-grid"></div>
   </section>
 
   <section class="schedule">
@@ -56,17 +54,12 @@
       <span class="en">WEEKLY  BROADCAST  GRID</span>
       <span class="line"></span>
     </div>
-    <div class="sched-table" id="schedule-table">
-      <!-- ここに JS で マトリクス表を描画 -->
-    </div>
+    <div class="sched-table" id="schedule-table"></div>
   </section>
 
   <footer class="footer">
     <span>© 株式会社スクーミー SchooMy, Inc.  ／  fox.schoomy.com</span>
   </footer>
-
-  <div id="loading" class="overlay">データを読み込み中…</div>
-  <div id="error" class="overlay error" style="display:none"></div>
 
 </div>
 
