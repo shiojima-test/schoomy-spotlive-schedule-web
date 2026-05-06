@@ -233,24 +233,23 @@ function extractKomaNumber(programId) {
 }
 
 // =========== タイトル短縮 ===========
-function shortenTitle(title) {
+function shortenTitle(title, max = 11) {
   if (!title) return '';
   // ：→｜統一、空白trim
   let t = title.replace(/[:：]/g, '｜').trim();
-  const MAX = 11;
   const idx = t.indexOf('｜');
   if (idx >= 0) {
     let head = t.slice(0, idx);
     let tail = t.slice(idx + 1);
     // センサー suffix 削除("タッチセンサー" → "タッチ")
     head = head.replace(/センサー$/, '');
-    const room = MAX - head.length - 1; // 1 for ｜
+    const room = max - head.length - 1; // 1 for ｜
     if (tail.length > room && room > 0) {
       tail = tail.slice(0, Math.max(1, room - 1)) + '…';
     }
     return head + '｜' + tail;
   }
-  if (t.length > MAX) return t.slice(0, MAX - 1) + '…';
+  if (t.length > max) return t.slice(0, max - 1) + '…';
   return t;
 }
 
@@ -287,7 +286,7 @@ function renderCatalog(newPrograms, catalog) {
       card.className = 'show-card';
       if (p) {
         card.innerHTML =
-          `<div class="sc-title">${shortenTitle(p.title)}</div>` +
+          `<div class="sc-title">${escapeHtml(shortenTitle(p.title, 15))}</div>` +
           `<div class="sc-desc">${escapeHtml(truncateLatte(p.latte || p.content, 60))}</div>`;
       } else if (id) {
         card.innerHTML =
