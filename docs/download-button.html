@@ -1,0 +1,73 @@
+<!-- スクーミースポットライブ放送スケジュール PDFダウンロードボタン v1 -->
+<!--
+========================================================
+  使い方:
+   - PLACEHOLDER_FILE_ID を Driveの実ファイルIDに置き換える
+   - GASの buildPdfAndSaveToDrive() が完了時に出すダイアログから
+     ファイルIDをコピーして貼り付け
+  ボタン色:
+   - 紺(#1F3A8A): スクーミーブランドカラー
+========================================================
+-->
+
+<style>
+.schoomy-spotlive-dl-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+  margin: 24px 0;
+}
+.schoomy-spotlive-dl-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 32px;
+  color: #ffffff !important;
+  font-family: 'Noto Sans JP','Hiragino Sans','Meiryo',sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  text-decoration: none !important;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+.schoomy-spotlive-dl-btn--navy {
+  background: #1F3A8A;
+  box-shadow: 0 2px 6px rgba(31,58,138,0.3);
+}
+.schoomy-spotlive-dl-btn--navy:hover {
+  background: #14275E;
+  box-shadow: 0 4px 10px rgba(31,58,138,0.5);
+  transform: translateY(-1px);
+}
+
+/* スマホ表示: ボタン幅を画面いっぱいにせず左右余白を確保 */
+@media (max-width: 768px) {
+  .schoomy-spotlive-dl-wrap {
+    gap: 12px;
+    margin: 20px 0;
+    padding: 0 16px;
+  }
+  .schoomy-spotlive-dl-btn {
+    width: calc(100% - 32px);
+    max-width: 360px;
+    padding: 13px 20px;
+    font-size: 15px;
+  }
+}
+</style>
+
+<div class="schoomy-spotlive-dl-wrap">
+  <a class="schoomy-spotlive-dl-btn schoomy-spotlive-dl-btn--navy"
+     href="https://drive.google.com/uc?export=download&id=PLACEHOLDER_FILE_ID"
+     download>
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+      <polyline points="7 10 12 15 17 10"></polyline>
+      <line x1="12" y1="15" x2="12" y2="3"></line>
+    </svg>
+    <span>スポットライブ放送スケジュールをPDFでダウンロード</span>
+  </a>
+</div>

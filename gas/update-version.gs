@@ -114,15 +114,88 @@ function buildPdfAndSaveToDrive() {
     return;
   }
 
-  ui.alert(
-    `🎉 完了しました！\n\n` +
-    `Drive: ${result.driveUrl}\n` +
-    `Releases: https://github.com/${GH_OWNER}/${GH_REPO}/releases/tag/schedule-${cfg.month}-${newVersion}`
-  );
+  showCompletionDialog_(cfg.month, newVersion, result);
+}
+
+/** 完了ダイアログ: ダウンロードリンク + ウェブ埋め込み用HTMLスニペットを表示 */
+function showCompletionDialog_(month, version, result) {
+  const html = HtmlService.createHtmlOutput(`
+    <style>
+      body { font-family: -apple-system, "Hiragino Sans", sans-serif; padding: 14px; margin: 0; font-size: 12px; }
+      h3 { margin: 0 0 10px; font-size: 14px; color: #1F3A8A; }
+      p { margin: 4px 0; }
+      .link { color: #1F3A8A; word-break: break-all; }
+      .box { background: #F4F6FA; border: 1px solid #DDE3EE; padding: 8px; margin: 8px 0; border-radius: 4px; font-family: monospace; font-size: 11px; max-height: 240px; overflow: auto; white-space: pre-wrap; }
+      button { font-size: 12px; padding: 5px 12px; cursor: pointer; background: #1F3A8A; color: #fff; border: none; border-radius: 4px; margin-right: 6px; }
+      button.ghost { background: #fff; color: #333; border: 1px solid #ccc; }
+    </style>
+    <h3>🎉 PDFビルド & Drive保存 完了</h3>
+    <p><strong>月:</strong> ${escapeForHtml_(month)} / <strong>バージョン:</strong> ${escapeForHtml_(version)}</p>
+    <p><strong>ファイル名:</strong> ${escapeForHtml_(result.fileName)}</p>
+    <p><strong>ファイルID:</strong> <span class="link">${escapeForHtml_(result.fileId)}</span></p>
+    <p><strong>Drive で開く:</strong> <a class="link" href="${escapeForHtml_(result.driveUrl)}" target="_blank">${escapeForHtml_(result.driveUrl)}</a></p>
+    <p><strong>直リンク(ダウンロード):</strong> <a class="link" href="${escapeForHtml_(result.downloadUrl)}" target="_blank">${escapeForHtml_(result.downloadUrl)}</a></p>
+
+    <h3 style="margin-top:14px;">ウェブサイト埋め込み用HTML</h3>
+    <p>そのままコピーしてホームページに貼り付けてください。</p>
+    <div class="box" id="snippet">${escapeForHtml_(buildEmbedHtml_(result.fileId, month))}</div>
+    <button onclick="copySnippet()">HTMLをコピー</button>
+    <button class="ghost" onclick="google.script.host.close()">閉じる</button>
+    <script>
+      function copySnippet() {
+        const t = document.getElementById('snippet').innerText;
+        navigator.clipboard.writeText(t).then(() => {
+          const b = event.target;
+          const orig = b.textContent;
+          b.textContent = 'コピーしました ✓';
+          setTimeout(() => { b.textContent = orig; }, 1500);
+        });
+      }
+    </script>
+  `).setWidth(720).setHeight(620);
+  SpreadsheetApp.getUi().showModalDialog(html, 'PDFビルド完了');
+}
+
+function buildEmbedHtml_(fileId, month) {
+  return `<!-- スクーミースポットライブ放送スケジュール ${month} ダウンロードボタン -->
+<style>
+.schoomy-spotlive-dl-wrap { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin: 24px 0; }
+.schoomy-spotlive-dl-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  padding: 14px 32px; color: #ffffff !important;
+  font-family: 'Noto Sans JP','Hiragino Sans','Meiryo',sans-serif; font-size: 16px; font-weight: 700;
+  text-decoration: none !important; border-radius: 8px; transition: all 0.2s ease; box-sizing: border-box;
+  background: #1F3A8A; box-shadow: 0 2px 6px rgba(31,58,138,0.3);
+}
+.schoomy-spotlive-dl-btn:hover {
+  background: #14275E; box-shadow: 0 4px 10px rgba(31,58,138,0.5); transform: translateY(-1px);
+}
+@media (max-width: 768px) {
+  .schoomy-spotlive-dl-wrap { gap: 12px; margin: 20px 0; padding: 0 16px; }
+  .schoomy-spotlive-dl-btn { width: calc(100% - 32px); max-width: 360px; padding: 13px 20px; font-size: 15px; }
+}
+</style>
+<div class="schoomy-spotlive-dl-wrap">
+  <a class="schoomy-spotlive-dl-btn"
+     href="https://drive.google.com/uc?export=download&id=${fileId}"
+     download>
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+      <polyline points="7 10 12 15 17 10"></polyline>
+      <line x1="12" y1="15" x2="12" y2="3"></line>
+    </svg>
+    <span>スポットライブ放送スケジュール(${month})をPDFでダウンロード</span>
+  </a>
+</div>`;
+}
+
+function escapeForHtml_(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
 function syncLatestPdfToDrive() {
-  const ui = SpreadsheetApp.getUi();
   const cfg = readConfig_();
   if (!cfg) return;
   const token = getGithubToken_();
@@ -130,10 +203,10 @@ function syncLatestPdfToDrive() {
 
   const result = downloadAndSaveToDrive_(token, cfg.month, cfg.version, cfg.driveFolderId);
   if (!result) {
-    ui.alert('Drive保存に失敗しました。Releaseがまだ存在しないかもしれません。');
+    SpreadsheetApp.getUi().alert('Drive保存に失敗しました。Releaseがまだ存在しないかもしれません。');
     return;
   }
-  ui.alert(`Drive保存しました ✅\n${result.driveUrl}`);
+  showCompletionDialog_(cfg.month, cfg.version, result);
 }
 
 // =============== GitHub API ===============
@@ -194,18 +267,18 @@ function downloadAndSaveToDrive_(token, month, version, folderId) {
   }
   const release = JSON.parse(relRes.getContentText());
 
-  // 一番新しい(タイムスタンプが最後の) PDF を選ぶ
-  const pdfs = (release.assets || [])
+  // 一番新しい(タイムスタンプが最後の) PDF アセットを選ぶ
+  const stampedAssets = (release.assets || [])
     .filter(a => a.name.endsWith('.pdf') && !a.name.includes('latest'))
     .sort((a, b) => a.name.localeCompare(b.name));
-  if (!pdfs.length) {
+  if (!stampedAssets.length) {
     Logger.log('no pdf assets in release');
     return null;
   }
-  const asset = pdfs[pdfs.length - 1];
+  const asset = stampedAssets[stampedAssets.length - 1];
 
   const blobRes = UrlFetchApp.fetch(asset.url, {
-    headers: { ...ghHeaders_(token), 'Accept': 'application/octet-stream' },
+    headers: Object.assign({}, ghHeaders_(token), { 'Accept': 'application/octet-stream' }),
     muteHttpExceptions: true,
     followRedirects: true,
   });
@@ -214,12 +287,37 @@ function downloadAndSaveToDrive_(token, month, version, folderId) {
     return null;
   }
 
-  const blob = blobRes.getBlob().setName(asset.name).setContentType('application/pdf');
-  let folder = folderId ? DriveApp.getFolderById(folderId) : DriveApp.getRootFolder();
+  const folder = folderId ? DriveApp.getFolderById(folderId) : DriveApp.getRootFolder();
 
-  // 同名ファイルが既にあれば上書きせず履歴として保存する(タイムスタンプで一意)
-  const file = folder.createFile(blob);
-  return { driveUrl: file.getUrl(), fileName: asset.name };
+  // 表示用: 「最新」ファイル(月単位で固定名)
+  // 既存があれば trashed にしてから新規作成。IDは毎回変わる(下記アラートに表示)。
+  const latestName = `スポットライブ放送スケジュール_${month}.pdf`;
+  const it = folder.getFilesByName(latestName);
+  while (it.hasNext()) it.next().setTrashed(true);
+  const latestBlob = blobRes.getBlob().copyBlob().setName(latestName).setContentType('application/pdf');
+  const latestFile = folder.createFile(latestBlob);
+
+  // 履歴用: タイムスタンプ付きの版もそのまま残す(過去ビルドを参照したい時用)
+  const historyBlob = blobRes.getBlob().copyBlob().setName(asset.name).setContentType('application/pdf');
+  folder.createFile(historyBlob);
+
+  // リンクを知っている人なら閲覧/ダウンロード可(uc?export=download が動くため)
+  try {
+    latestFile.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+  } catch (e) {
+    Logger.log('setSharing failed: ' + e);
+  }
+
+  // 最新ファイルIDを ScriptProperties にも保存(他関数からの参照用)
+  PropertiesService.getScriptProperties().setProperty('LATEST_PDF_FILE_ID', latestFile.getId());
+
+  return {
+    fileId: latestFile.getId(),
+    fileName: latestName,
+    driveUrl: latestFile.getUrl(),
+    downloadUrl: `https://drive.google.com/uc?export=download&id=${latestFile.getId()}`,
+    historyName: asset.name,
+  };
 }
 
 // =============== ヘルパー ===============
