@@ -129,6 +129,7 @@ function parseCatalog(rows) {
     url: idx('教材URL'),
     person: idx('担当'),
     latte: idx('ラテ欄用記事仮文'),
+    latteShort: idx('ラテ短'),
   };
   for (let i = headerIdx + 1; i < rows.length; i++) {
     const r = rows[i];
@@ -146,6 +147,7 @@ function parseCatalog(rows) {
       url: r[COL.url] || '',
       person: r[COL.person] || '',
       latte: r[COL.latte] || '',
+      latteShort: COL.latteShort >= 0 ? (r[COL.latteShort] || '') : '',
     };
   }
   return map;
@@ -287,7 +289,7 @@ function renderCatalog(newPrograms, catalog) {
       if (p) {
         card.innerHTML =
           `<div class="sc-title">${escapeHtml(shortenTitle(p.title, 15))}</div>` +
-          `<div class="sc-desc">${escapeHtml(truncateLatte(p.latte || p.content, 60))}</div>`;
+          `<div class="sc-desc">${escapeHtml(p.latteShort || truncateLatte(p.latte || p.content, 56))}</div>`;
       } else if (id) {
         card.innerHTML =
           `<div class="sc-title">${escapeHtml(id)}</div>` +
@@ -302,12 +304,32 @@ function renderCatalog(newPrograms, catalog) {
   }
 }
 
-// カタログ説明文(2-3行で収まる長さ)
+// カタログ説明文(目標 ~62字、句点で完結させる)
 function truncateLatte(s, n) {
+  s = String(s || '').replace(/\r?\n/g, '').trim();
   if (!s) return '';
-  s = String(s).trim();
-  if (s.length <= n) return s;
-  return s.slice(0, n - 1) + '…';
+  if (s.length <= n) return /[。！？]$/.test(s) ? s : s + '。';
+
+  const idx1 = s.indexOf('。');
+  if (idx1 === -1) {
+    const lastComma = s.lastIndexOf('、', n);
+    if (lastComma > n * 0.5) return s.slice(0, lastComma) + '。';
+    return s.slice(0, n) + '。';
+  }
+  const sent1 = s.slice(0, idx1 + 1);
+  if (sent1.length >= n * 0.85) return sent1;
+
+  const remaining = s.slice(idx1 + 1);
+  const budget = n - sent1.length;
+  if (remaining.length <= budget) return sent1 + remaining + (/[。！？]$/.test(remaining) ? '' : '。');
+
+  const idx2 = remaining.indexOf('。');
+  if (idx2 !== -1 && idx2 + 1 <= budget * 1.05) {
+    return sent1 + remaining.slice(0, idx2 + 1);
+  }
+  const lastComma = remaining.slice(0, budget).lastIndexOf('、');
+  if (lastComma > budget * 0.5) return sent1 + remaining.slice(0, lastComma) + '。';
+  return sent1 + remaining.slice(0, budget - 1) + '。';
 }
 
 // =========== 描画: スケジュール表 ===========
