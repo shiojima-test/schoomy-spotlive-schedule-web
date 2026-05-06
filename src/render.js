@@ -259,11 +259,11 @@ function shortenTitle(title, max = 11) {
   return t;
 }
 
-// スロット説明文を最大2行(~22字)に収める
+// スロット説明文を最大2行(~28字)に収める
 function slotDesc(s) {
   if (!s) return '';
   s = String(s).trim();
-  const MAX = 22;
+  const MAX = 28;
   if (s.length > MAX) return s.slice(0, MAX - 1) + '…';
   return s;
 }

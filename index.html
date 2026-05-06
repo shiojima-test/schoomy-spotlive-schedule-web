@@ -13,6 +13,15 @@
     html, body { background: #fff !important; }
     .page { margin: 0 !important; box-shadow: none !important; }
   }
+  /* footer を圧縮して表に高さを譲る(画面でもPDFでも同じ見え方) */
+  .footer { padding: 1mm 8mm 1.2mm 8mm !important; border-top-width: 0.6mm !important; margin-top: auto !important; }
+  /* schedule の section-title 直後のマージンも圧縮 */
+  .schedule .section-title { margin-bottom: 1.5mm !important; }
+  /* catalog の bottom margin を少し圧縮 */
+  .catalog { margin-bottom: 1.5mm !important; }
+  /* schedule を残り高さいっぱいに広げる(余白を表に振る) */
+  .schedule { flex-grow: 1 !important; }
+  .sched-table { flex-grow: 1 !important; grid-auto-rows: auto 1fr 1fr 1fr 1fr !important; }
 </style>
 </head>
 <body>
