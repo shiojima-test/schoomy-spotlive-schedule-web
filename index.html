@@ -22,6 +22,10 @@
   /* schedule を残り高さいっぱいに広げる(余白を表に振る) */
   .schedule { flex-grow: 1 !important; }
   .sched-table { flex-grow: 1 !important; grid-auto-rows: auto 1fr 1fr 1fr 1fr !important; }
+  /* セル内のスロット群を縦方向に均等分散して空白を分配 */
+  .sched-cell.sched-content { justify-content: space-around !important; }
+  /* カタログのタイトルは2行までの折り返しを許可(横幅一杯まで使う) */
+  .show-card .sc-title { white-space: normal !important; overflow: visible !important; line-height: 1.15 !important; }
 </style>
 </head>
 <body>
