@@ -294,8 +294,8 @@ function renderCatalog(newPrograms, catalog) {
         card.innerHTML =
           // カタログはタイトル全文(CSS側でnowrap解除済み、必要なら2-3行に折り返す)
           `<div class="sc-title">${escapeHtml((p.title || '').replace(/[:：]/g, '｜').trim())}</div>` +
-          // 説明文: ラテ短(広告コピー)が60字以上ならそれを使い、短ければ ラテ欄全文を~78字で切る
-          `<div class="sc-desc">${escapeHtml((p.latteShort && p.latteShort.length >= 60) ? p.latteShort : truncateLatte(p.latte || p.content, 78))}</div>`;
+          // 説明文: ラテ短(広告コピー)があれば優先(3行カード)、無ければ ラテ欄を~58字で切る
+          `<div class="sc-desc">${escapeHtml(p.latteShort || truncateLatte(p.latte || p.content, 58))}</div>`;
       } else if (id) {
         card.innerHTML =
           `<div class="sc-title">${escapeHtml(id)}</div>` +
