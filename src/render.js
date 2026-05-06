@@ -5,10 +5,22 @@
    ============================================ */
 
 const SHEET_ID = '1492Z27DEgbQkVsga5ZCpr19QCoGfwS2Zb5eT0eM-FJs';
-const GID_SCHEDULE = '1588173790';
-// 番組統合表のgidは GAS で生成された後に確認して書き換える
-// 暫定: `番組統合表` というシート名指定でCSVを取得する代替URL
-const GID_CATALOG = '0'; // TODO: GAS実行後に正しいgidに書き換える
+
+// 番組統合表（catalog）のgid。確定済み。
+const GID_CATALOG = '1588173790';
+
+// スケジュールマトリクスは上半期/下半期の2タブに分かれている。
+// ?month=YYYY-MM の月から自動でどちらを使うか判定する。
+//  - 上半期: 4月〜8月
+//  - 下半期: 9月〜翌3月
+// TODO: 塩島さんから両タブの実gidを確認次第、下記を実値に置き換える
+const GID_SCHEDULE_H1 = '0'; // 上半期4月から8月末_ライブスケジュール
+const GID_SCHEDULE_H2 = '0'; // 下半期9月から3月末_ライブスケジュール
+
+function pickScheduleGid(month) {
+  const m = parseInt(month.split('-')[1], 10);
+  return (m >= 4 && m <= 8) ? GID_SCHEDULE_H1 : GID_SCHEDULE_H2;
+}
 
 // CSV取得URL(publish形式とexport形式の2種類試す)
 function csvUrl(gid) {
@@ -34,7 +46,7 @@ async function init() {
 
   // 1. CSVを取得
   const [scheduleText, catalogText] = await Promise.all([
-    fetchCSV(GID_SCHEDULE),
+    fetchCSV(pickScheduleGid(month)),
     fetchCSV(GID_CATALOG),
   ]);
 
