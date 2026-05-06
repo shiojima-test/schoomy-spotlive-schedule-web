@@ -253,15 +253,15 @@ function shortenTitle(title) {
   return t;
 }
 
-// 説明文先頭を1文(目安30字)で抽出
-function truncate(s, n) {
+// スロット説明文を1行(セル内幅 ~14字で確実に収まる長さ)に圧縮
+function slotDesc(s) {
   if (!s) return '';
   s = String(s).trim();
-  // 句点で1文目を切り出し
-  const dotIdx = s.indexOf('。');
-  if (dotIdx > 0 && dotIdx < n + 5) return s.slice(0, dotIdx);
-  if (s.length <= n) return s;
-  return s.slice(0, n - 1) + '…';
+  // 「。」「、」「・」「\n」のうち最初の区切りで1フレーズを切り出す
+  const cutAt = s.search(/[。、・\n]/);
+  if (cutAt > 0 && cutAt <= 14) return s.slice(0, cutAt);
+  if (s.length > 14) return s.slice(0, 13) + '…';
+  return s;
 }
 
 // =========== 描画: カタログ ===========
@@ -287,7 +287,7 @@ function renderCatalog(newPrograms, catalog) {
       card.className = 'show-card';
       card.innerHTML =
         `<div class="sc-title">${shortenTitle(p.title)}</div>` +
-        `<div class="sc-desc">${escapeHtml(truncateLatte(p.latte || p.content, 78))}</div>`;
+        `<div class="sc-desc">${escapeHtml(truncateLatte(p.latte || p.content, 60))}</div>`;
       body.appendChild(card);
     }
     col.appendChild(body);
@@ -370,7 +370,7 @@ function renderSchedule(monthRows, catalog, firstAirByProgram, month) {
             `<span class="cat-dot ${cat}"></span>` +
             `<span class="name${isNew ? ' is-new' : ''}">${escapeHtml(shortenTitle(p.title || slot.programId))}</span>` +
           `</div>` +
-          `<div class="slot-desc">${escapeHtml(truncate(p.goal || p.content || p.latte || '', 30))}</div>`;
+          `<div class="slot-desc">${escapeHtml(slotDesc(p.goal || p.content || p.latte || ''))}</div>`;
         cell.appendChild(block);
       }
       table.appendChild(cell);
