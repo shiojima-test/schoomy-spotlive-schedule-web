@@ -31,7 +31,13 @@ const url = isLocal
 
 const outputDir = path.resolve(__dirname, '../output');
 fs.mkdirSync(outputDir, { recursive: true });
-const outputPath = path.join(outputDir, `schoomy-spotlive-schedule_${month}_${version}.pdf`);
+
+// 全ビルドにタイムスタンプ付きの版を作成し、過去PDFを保持する。
+// 加えて `_latest.pdf` を最新版で上書きしておくと、常に同じパスで最新だけ参照できる。
+const stamp = new Date().toISOString().replace(/[-T:Z.]/g, '').slice(0, 14); // YYYYMMDDHHMMSS
+const fileName = `schoomy-spotlive-schedule_${month}_${version}_${stamp}.pdf`;
+const outputPath = path.join(outputDir, fileName);
+const latestPath = path.join(outputDir, `schoomy-spotlive-schedule_${month}_latest.pdf`);
 
 (async () => {
   console.log('PDFビルド開始');
@@ -70,7 +76,10 @@ const outputPath = path.join(outputDir, `schoomy-spotlive-schedule_${month}_${ve
   });
 
   await browser.close();
+
+  fs.copyFileSync(outputPath, latestPath);
   console.log('完了:', outputPath);
+  console.log('latest:', latestPath);
 })().catch(err => {
   console.error('エラー:', err);
   process.exit(1);

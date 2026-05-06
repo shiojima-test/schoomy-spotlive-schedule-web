@@ -122,9 +122,11 @@ function parseCatalog(rows) {
     no: idx('コマ番号'),
     id: idx('コマID'),
     titleJa: idx('講座タイトル(日本語)'),
+    titleShort: idx('タイトル短'),
     sub: idx('サブタイトル/カテゴリ'),
     content: idx('内容(本文)'),
     goal: idx('目標'),
+    goalShort: idx('目標短'),
     duration: idx('時間'),
     url: idx('教材URL'),
     person: idx('担当'),
@@ -140,9 +142,11 @@ function parseCatalog(rows) {
       no: parseInt(r[COL.no]) || 0,
       id,
       title: r[COL.titleJa] || '',
+      titleShort: COL.titleShort >= 0 ? (r[COL.titleShort] || '') : '',
       sub: r[COL.sub] || '',
       content: r[COL.content] || '',
       goal: r[COL.goal] || '',
+      goalShort: COL.goalShort >= 0 ? (r[COL.goalShort] || '') : '',
       duration: r[COL.duration] || '30分',
       url: r[COL.url] || '',
       person: r[COL.person] || '',
@@ -288,7 +292,7 @@ function renderCatalog(newPrograms, catalog) {
       card.className = 'show-card';
       if (p) {
         card.innerHTML =
-          `<div class="sc-title">${escapeHtml(shortenTitle(p.title, 15))}</div>` +
+          `<div class="sc-title">${escapeHtml(p.titleShort || shortenTitle(p.title, 15))}</div>` +
           `<div class="sc-desc">${escapeHtml(p.latteShort || truncateLatte(p.latte || p.content, 56))}</div>`;
       } else if (id) {
         card.innerHTML =
@@ -393,13 +397,15 @@ function renderSchedule(monthRows, catalog, firstAirByProgram, month) {
         const cat = identifyCategory(slot.programId) || 'a';
         const block = document.createElement('div');
         block.className = 'slot-block';
+        const nameTxt = p.titleShort || shortenTitle(p.title || slot.programId);
+        const descTxt = p.goalShort || slotDesc(p.goal || p.content || p.latte || '');
         block.innerHTML =
           `<div class="slot-line1">` +
             `<span class="time">${slot.time}</span>` +
             `<span class="cat-dot ${cat}"></span>` +
-            `<span class="name${isNew ? ' is-new' : ''}">${escapeHtml(shortenTitle(p.title || slot.programId))}</span>` +
+            `<span class="name${isNew ? ' is-new' : ''}">${escapeHtml(nameTxt)}</span>` +
           `</div>` +
-          `<div class="slot-desc">${escapeHtml(slotDesc(p.goal || p.content || p.latte || ''))}</div>`;
+          `<div class="slot-desc">${escapeHtml(descTxt)}</div>`;
         cell.appendChild(block);
       }
       table.appendChild(cell);

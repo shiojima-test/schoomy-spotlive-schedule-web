@@ -1,0 +1,11 @@
+import { chromium } from 'playwright';
+const browser = await chromium.launch();
+const ctx = await browser.newContext({ viewport: { width: 880, height: 1100 }, deviceScaleFactor: 2 });
+const page = await ctx.newPage();
+await page.goto('http://localhost:8000/index.html?month=2026-05', { waitUntil: 'networkidle' });
+await page.evaluate(() => document.fonts.ready);
+await page.waitForTimeout(1500);
+const el = await page.$('.page');
+await el.screenshot({ path: '/tmp/page.png' });
+console.log('saved /tmp/page.png');
+await browser.close();
