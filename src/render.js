@@ -13,9 +13,8 @@ const GID_CATALOG = '1588173790';
 // ?month=YYYY-MM の月から自動でどちらを使うか判定する。
 //  - 上半期: 4月〜8月
 //  - 下半期: 9月〜翌3月
-// TODO: 塩島さんから両タブの実gidを確認次第、下記を実値に置き換える
-const GID_SCHEDULE_H1 = '0'; // 上半期4月から8月末_ライブスケジュール
-const GID_SCHEDULE_H2 = '0'; // 下半期9月から3月末_ライブスケジュール
+const GID_SCHEDULE_H1 = '552343211'; // 上半期4月から8月末_ライブスケジュール
+const GID_SCHEDULE_H2 = '28500727';  // 下半期9月から3月末_ライブスケジュール
 
 function pickScheduleGid(month) {
   const m = parseInt(month.split('-')[1], 10);
