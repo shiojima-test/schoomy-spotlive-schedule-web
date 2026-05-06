@@ -253,14 +253,14 @@ function shortenTitle(title) {
   return t;
 }
 
-// スロット説明文を1行(セル内幅 ~14字で確実に収まる長さ)に圧縮
+// スロット説明文を1行(セル内幅 ~15字、折り返しを発生させない)に収める
 function slotDesc(s) {
   if (!s) return '';
   s = String(s).trim();
   // 「。」「、」「・」「\n」のうち最初の区切りで1フレーズを切り出す
   const cutAt = s.search(/[。、・\n]/);
-  if (cutAt > 0 && cutAt <= 14) return s.slice(0, cutAt);
-  if (s.length > 14) return s.slice(0, 13) + '…';
+  if (cutAt > 0 && cutAt <= 15) return s.slice(0, cutAt);
+  if (s.length > 15) return s.slice(0, 14) + '…';
   return s;
 }
 
@@ -280,14 +280,23 @@ function renderCatalog(newPrograms, catalog) {
     const body = document.createElement('div');
     body.className = 'cat-body';
     const ids = newPrograms[cat.key] || [];
-    for (const id of ids) {
-      const p = catalog[id];
-      if (!p) continue;
+    // 必ず4カード描画(統合表に未登録のIDは「番組情報を準備中」のプレースホルダ)
+    for (let i = 0; i < 4; i++) {
+      const id = ids[i];
+      const p = id ? catalog[id] : null;
       const card = document.createElement('div');
       card.className = 'show-card';
-      card.innerHTML =
-        `<div class="sc-title">${shortenTitle(p.title)}</div>` +
-        `<div class="sc-desc">${escapeHtml(truncateLatte(p.latte || p.content, 60))}</div>`;
+      if (p) {
+        card.innerHTML =
+          `<div class="sc-title">${shortenTitle(p.title)}</div>` +
+          `<div class="sc-desc">${escapeHtml(truncateLatte(p.latte || p.content, 78))}</div>`;
+      } else if (id) {
+        card.innerHTML =
+          `<div class="sc-title">${escapeHtml(id)}</div>` +
+          `<div class="sc-desc">番組情報を準備中</div>`;
+      } else {
+        card.innerHTML = `<div class="sc-title">—</div><div class="sc-desc"></div>`;
+      }
       body.appendChild(card);
     }
     col.appendChild(body);
