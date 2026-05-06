@@ -237,30 +237,29 @@ function shortenTitle(title) {
   if (!title) return '';
   // ：→｜統一、空白trim
   let t = title.replace(/[:：]/g, '｜').trim();
+  const MAX = 11;
   const idx = t.indexOf('｜');
   if (idx >= 0) {
     let head = t.slice(0, idx);
     let tail = t.slice(idx + 1);
     // センサー suffix 削除("タッチセンサー" → "タッチ")
     head = head.replace(/センサー$/, '');
-    const room = 14 - head.length - 1; // 1 for ｜
+    const room = MAX - head.length - 1; // 1 for ｜
     if (tail.length > room && room > 0) {
       tail = tail.slice(0, Math.max(1, room - 1)) + '…';
     }
     return head + '｜' + tail;
   }
-  if (t.length > 14) return t.slice(0, 13) + '…';
+  if (t.length > MAX) return t.slice(0, MAX - 1) + '…';
   return t;
 }
 
-// スロット説明文を1行(セル内幅 ~15字、折り返しを発生させない)に収める
+// スロット説明文を最大2行(~22字)に収める
 function slotDesc(s) {
   if (!s) return '';
   s = String(s).trim();
-  // 「。」「、」「・」「\n」のうち最初の区切りで1フレーズを切り出す
-  const cutAt = s.search(/[。、・\n]/);
-  if (cutAt > 0 && cutAt <= 15) return s.slice(0, cutAt);
-  if (s.length > 15) return s.slice(0, 14) + '…';
+  const MAX = 22;
+  if (s.length > MAX) return s.slice(0, MAX - 1) + '…';
   return s;
 }
 
@@ -289,7 +288,7 @@ function renderCatalog(newPrograms, catalog) {
       if (p) {
         card.innerHTML =
           `<div class="sc-title">${shortenTitle(p.title)}</div>` +
-          `<div class="sc-desc">${escapeHtml(truncateLatte(p.latte || p.content, 78))}</div>`;
+          `<div class="sc-desc">${escapeHtml(truncateLatte(p.latte || p.content, 60))}</div>`;
       } else if (id) {
         card.innerHTML =
           `<div class="sc-title">${escapeHtml(id)}</div>` +
