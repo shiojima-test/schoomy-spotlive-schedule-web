@@ -49,6 +49,13 @@ function initConfigSheet() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   let config = ss.getSheetByName(CONFIG_SHEET_NAME);
   if (!config) config = ss.insertSheet(CONFIG_SHEET_NAME);
+
+  // B1(month), B2(version), B4(driveFolderId) は「日付」として誤解釈されないよう
+  // 先に文字列(plain text)書式を固定してから値を書く
+  config.getRange('B1').setNumberFormat('@');
+  config.getRange('B2').setNumberFormat('@');
+  config.getRange('B4').setNumberFormat('@');
+
   const rows = [
     ['month', '2026-05'],
     ['version', 'v1.0'],
@@ -349,14 +356,27 @@ function readConfig_() {
     SpreadsheetApp.getUi().alert('configシートがありません。「configシートを初期化」を先に実行してください。');
     return null;
   }
-  const month = String(sheet.getRange('B1').getValue() || '').trim();
+  const month = parseMonth_(sheet.getRange('B1').getValue());
   const version = String(sheet.getRange('B2').getValue() || '').trim();
   const driveFolderId = String(sheet.getRange('B4').getValue() || '').trim();
   if (!/^\d{4}-\d{2}$/.test(month)) {
-    SpreadsheetApp.getUi().alert(`monthの形式が不正: ${month}\n例: 2026-05`);
+    SpreadsheetApp.getUi().alert(
+      `month の形式が不正です: ${sheet.getRange('B1').getValue()}\n` +
+      `B1 セルを「2026-05」のような文字列にしてください。\n` +
+      `(セル書式が「日付」になっている場合は「書式 > 数字 > 書式なしテキスト」に変更後、再入力)`
+    );
     return null;
   }
   return { month, version, driveFolderId };
+}
+
+/** B1 が「日付型」として保存されていても "YYYY-MM" 文字列として取り出す */
+function parseMonth_(v) {
+  if (v instanceof Date) {
+    const tz = Session.getScriptTimeZone() || 'Asia/Tokyo';
+    return Utilities.formatDate(v, tz, 'yyyy-MM');
+  }
+  return String(v || '').trim();
 }
 
 function setConfig_(key, value) {
